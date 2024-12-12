@@ -54,7 +54,14 @@ const Calendar = () => {
         <Button onClick={handlePrevMonth} variant="outline">
           Prev
         </Button>
-        <h2 className="text-lg font-bold">{format(currentMonth, "MMMM yyyy")}</h2>
+        
+        {/* Month and Year */}
+        <div className="text-center">
+          <h2 className="text-lg font-bold text-white">{format(currentMonth, "MMMM yyyy")}</h2>
+          {/* Current date */}
+          <p className="text-sm text-gray-500">{`Current Date: ${format(new Date(), "MMMM dd, yyyy")}`}</p>
+        </div>
+  
         <Button onClick={handleNextMonth} variant="outline">
           Next
         </Button>
@@ -76,7 +83,8 @@ const Calendar = () => {
               isSameDay(date, new Date()) && "bg-blue-200",
               isSameDay(date, selectedDate) && "bg-blue-500 text-black",
               isWeekend(date) ? "bg-blue-200" : "bg-white",
-              !isSameMonth(date) && "opacity-[0.65]"
+              !isSameMonth(date) && "opacity-[0.65]",
+              date.toDateString() === new Date().toDateString() && "bg-blue-400",
             )}
             onClick={() => handleDateClick(date)}
           >
