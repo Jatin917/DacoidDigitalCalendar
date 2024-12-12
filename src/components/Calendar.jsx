@@ -6,6 +6,7 @@ import {
   format,
 } from "date-fns";
 import { addDays, addMonths, endOfMonth, endOfWeek, isSameDay, isWeekend, startOfMonth, startOfWeek, subMonths } from "../utils/dateUtils";
+import AddEventModal from "./addEventModal";
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -13,6 +14,7 @@ const Calendar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(currentMonth.getFullYear()); 
+  const [isEventModalOpen, setEventModal] = useState(false);
   const isSameMonth = (date) =>{
       return (
           date && date.getMonth() === currentMonth.getMonth()
@@ -51,6 +53,25 @@ const Calendar = () => {
   }
 
   const calendarDays = generateCalendar();
+
+  const handleEventModalOpen = () =>{
+    setEventModal(true);
+  }
+
+  const onCloseEventModal = () =>{
+    setEventModal(false);
+  }
+
+  const onAddEvent = (event) =>{
+    const date = selectedDate.toDateString();
+    event = {...event, date};
+    let events = JSON.parse(localStorage.getItem("events")) || {};
+    if(!events[date]){
+      events[date] = [];
+    }
+    events[date].push(event);
+    localStorage.setItem("events", JSON.stringify(events));
+  }
 
   useEffect(() => {
     setSelectedDate(null);
@@ -100,7 +121,11 @@ const Calendar = () => {
               ${isWeekend(date) ? 'bg-blue-200' : 'bg-white'}
               ${!isSameMonth(date) && 'opacity-[0.65]'}
               ${date.toDateString() === new Date().toDateString() && 'bg-blue-400'}`}
-            onClick={() => handleDateClick(date)}
+            onClick={() =>(
+              handleDateClick(date),
+              handleEventModalOpen()
+            )
+            }
           >
             {format(date, "d")}
           </div>
@@ -150,6 +175,10 @@ const Calendar = () => {
           </div>
         </div>
       )}
+      {/* Modal for adding an event */}
+      {
+        isEventModalOpen && <AddEventModal onClose={onCloseEventModal} onAddEvent={onAddEvent} />
+      }
     </div>
   );
 };
