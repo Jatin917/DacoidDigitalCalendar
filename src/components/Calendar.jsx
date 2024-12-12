@@ -10,6 +10,9 @@ import { addDays, addMonths, endOfMonth, endOfWeek, isSameDay, isWeekend, startO
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth.getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(currentMonth.getFullYear()); 
   const isSameMonth = (date) =>{
       return (
           date && date.getMonth() === currentMonth.getMonth()
@@ -40,6 +43,12 @@ const Calendar = () => {
   const handleDateClick = (date) => {
     setSelectedDate(date);
   };
+  const goToFunction = (month, year) => {
+    const d = new Date();
+    d.setFullYear(year, month-1);
+    setCurrentMonth(d);
+    setIsModalOpen(false);
+  }
 
   const calendarDays = generateCalendar();
 
@@ -57,7 +66,12 @@ const Calendar = () => {
         
         {/* Month and Year */}
         <div className="text-center">
-          <h2 className="text-lg font-bold text-white">{format(currentMonth, "MMMM yyyy")}</h2>
+          <a 
+            className="text-lg font-bold text-white cursor-pointer"
+            onClick={() => setIsModalOpen(true)} // Open modal on click
+          >
+            {format(currentMonth, "MMMM yyyy")}
+          </a>
           {/* Current date */}
           <p className="text-sm text-gray-500">{`Current Date: ${format(new Date(), "MMMM dd, yyyy")}`}</p>
         </div>
@@ -75,23 +89,67 @@ const Calendar = () => {
           </div>
         ))}
   
+        {/* Render Calendar Days */}
+        {/* You will need to calculate `calendarDays` here. */}
         {calendarDays.map((date, index) => (
           <div
             key={index}
-            className={cn(
-              "p-2 text-center rounded cursor-pointer hover:bg-gray-200 flex-grow",
-              isSameDay(date, new Date()) && "bg-blue-200",
-              isSameDay(date, selectedDate) && "bg-blue-500 text-black",
-              isWeekend(date) ? "bg-blue-200" : "bg-white",
-              !isSameMonth(date) && "opacity-[0.65]",
-              date.toDateString() === new Date().toDateString() && "bg-blue-400",
-            )}
+            className={`p-2 text-center rounded cursor-pointer hover:bg-gray-200 flex-grow
+              ${isSameDay(date, new Date()) && 'bg-blue-200'}
+              ${isSameDay(date, selectedDate) && 'bg-blue-500 text-black'}
+              ${isWeekend(date) ? 'bg-blue-200' : 'bg-white'}
+              ${!isSameMonth(date) && 'opacity-[0.65]'}
+              ${date.toDateString() === new Date().toDateString() && 'bg-blue-400'}`}
             onClick={() => handleDateClick(date)}
           >
             {format(date, "d")}
           </div>
         ))}
       </div>
+
+      {/* Modal for selecting new month and year */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h3 className="text-xl font-bold mb-4">Go to Month & Year</h3>
+            <div className="flex mb-4">
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                className="p-2 border rounded-md w-1/2"
+              >
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                  <option key={month} value={month}>
+                    {format(new Date(2024, month - 1), "MMMM")}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                className="p-2 border rounded-md w-1/2 ml-2"
+                min="1900"
+                max="2100"
+              />
+            </div>
+            <div className="flex justify-between">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 bg-gray-300 rounded-md"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => goToFunction(selectedMonth, selectedYear)}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+              >
+                Go
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
