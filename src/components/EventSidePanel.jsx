@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useMemo } from "react";
-import { getEventColor } from "../utils/dateUtils";
-import { Clock, CalendarClock, MoreHorizontal, Search } from 'lucide-react';
+import { CalendarClock, Search } from 'lucide-react';
 import EventList from "./EventList";
+import { getFullDateTime } from "../utils/dateUtils";
 
 const EventSidePanel = ({selectedDate, events, setEvents }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -45,13 +45,8 @@ const EventSidePanel = ({selectedDate, events, setEvents }) => {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Helper function to create a full date from time strings
-  const getFullDateTime = (date, time) => {
-    const [hours, minutes] = time.split(":").map(Number);
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes);
-  };
 
-  // Memoize sorted events
+
   const sortedEvents = useMemo(() => {
     if (!selectedDate || !filteredEvents[selectedDate.toDateString()]) return [];
     return [...filteredEvents[selectedDate.toDateString()]].sort((a, b) => {
@@ -61,7 +56,6 @@ const EventSidePanel = ({selectedDate, events, setEvents }) => {
     });
   }, [selectedDate, filteredEvents]);
   // console.log(events);
-  // Find the next event
   useEffect(() => {
     const upcomingEvent = sortedEvents.find(event => getFullDateTime(selectedDate, event.startTime) > currentTime);
     setNextEvent(upcomingEvent);

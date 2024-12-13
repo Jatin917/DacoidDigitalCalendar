@@ -1,5 +1,4 @@
-import { useRecoilValue } from "recoil";
-import { monthAtom } from "../state/atoms/dateAtom";
+
 
 export const startOfMonth = (date) =>{
     const firstDate = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -56,16 +55,33 @@ export const isWeekend = (date) => {
     return day === 0 || day === 6;
   };
 
-  export const getEventColor = (isUpcoming) => {
-    const colorVariants = [
-      { background: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200' },
-      { background: 'bg-green-50', text: 'text-green-800', border: 'border-green-200' },
-      { background: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200' },
-      { background: 'bg-indigo-50', text: 'text-indigo-800', border: 'border-indigo-200' },
-      { background: 'bg-teal-50', text: 'text-teal-800', border: 'border-teal-200' }
-    ];
-  
-    return isUpcoming 
-      ? colorVariants[Math.floor(Math.random() * colorVariants.length)] 
-      : { background: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-300' };
+export const getEventColor = (isUpcoming) => {
+  const colorVariants = [
+    { background: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200' },
+    { background: 'bg-green-50', text: 'text-green-800', border: 'border-green-200' },
+    { background: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200' },
+    { background: 'bg-indigo-50', text: 'text-indigo-800', border: 'border-indigo-200' },
+    { background: 'bg-teal-50', text: 'text-teal-800', border: 'border-teal-200' }
+  ];
+
+  return isUpcoming 
+    ? colorVariants[Math.floor(Math.random() * colorVariants.length)] 
+    : { background: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-300' };
+};
+
+ export const downloadAsJSON = (data) => {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "exported-events.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}; 
+export const getFullDateTime = (date, time) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes);
   };

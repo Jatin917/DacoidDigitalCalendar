@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { 
   ChevronLeft, 
@@ -11,7 +11,7 @@ import {
 import {
   format,
 } from "date-fns";
-import { addDays, addMonths, endOfMonth, endOfWeek, isSameDay, isWeekend, startOfMonth, startOfWeek, subMonths } from "../utils/dateUtils";
+import { addDays, addMonths, downloadAsJSON, endOfMonth, endOfWeek, isSameDay, isWeekend, startOfMonth, startOfWeek, subMonths } from "../utils/dateUtils";
 import AddEventModal from "./addEventModal";
 
 const Calendar = ({events, onAddEvent, selectedDate, setSelectedDate}) => {
@@ -20,6 +20,8 @@ const Calendar = ({events, onAddEvent, selectedDate, setSelectedDate}) => {
   const [selectedMonth, setSelectedMonth] = useState(currentMonth.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(currentMonth.getFullYear()); 
   const [isEventModalOpen, setEventModal] = useState(false);
+  const startDate = startOfWeek(startOfMonth(currentMonth));
+  const endDate = endOfWeek(endOfMonth(currentMonth));
   
   const isSameMonth = (date) =>{
       return (
@@ -27,20 +29,6 @@ const Calendar = ({events, onAddEvent, selectedDate, setSelectedDate}) => {
       )
   }
   
-  const startDate = startOfWeek(startOfMonth(currentMonth));
-  const endDate = endOfWeek(endOfMonth(currentMonth));
-  const downloadAsJSON = (data) => {
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-  
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "exported-events.json";
-    link.click();
-  
-    URL.revokeObjectURL(url);
-  };
   const exportEvents = () =>{
     const currMonth = currentMonth.getMonth();
     const dates = Object.keys(events);
@@ -77,7 +65,6 @@ const Calendar = ({events, onAddEvent, selectedDate, setSelectedDate}) => {
         );
         setSelectedDate(prevMonthLastDay);
       }
-      else setSelectedDate(null);
     }
     setCurrentMonth(subMonths(currentMonth, 1));
   };
@@ -98,7 +85,6 @@ const Calendar = ({events, onAddEvent, selectedDate, setSelectedDate}) => {
         );
         setSelectedDate(nextMonthFirstDay);
       }
-      else setSelectedDate(null);
     }
     setCurrentMonth(addMonths(currentMonth, 1));
   };

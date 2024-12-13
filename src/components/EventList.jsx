@@ -1,24 +1,11 @@
 /* eslint-disable react/prop-types */
-import React, { useDebugValue, useEffect, useState } from 'react';
-import { MoreHorizontal, Edit, Trash } from 'lucide-react';
+import {useState } from 'react';
+import { MoreHorizontal, Trash } from 'lucide-react';
+import { getEventColor } from '../utils/dateUtils';
 
 const EventList = ({setEvents, events, sortedEvents, selectedDate, currentTime, formatTime, getFullDateTime, calculateDuration }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-
-  const getEventColor = (isUpcoming) => {
-    const colorVariants = [
-      { background: 'bg-blue-50', text: 'text-blue-800', border: 'border-blue-200' },
-      { background: 'bg-green-50', text: 'text-green-800', border: 'border-green-200' },
-      { background: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200' },
-      { background: 'bg-indigo-50', text: 'text-indigo-800', border: 'border-indigo-200' },
-      { background: 'bg-teal-50', text: 'text-teal-800', border: 'border-teal-200' },
-    ];
-
-    return isUpcoming
-      ? colorVariants[Math.floor(Math.random() * colorVariants.length)]
-      : { background: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-300' };
-  };
 
   const handleEditEvent = (event) => {
     setSelectedEvent(event);
@@ -26,7 +13,6 @@ const EventList = ({setEvents, events, sortedEvents, selectedDate, currentTime, 
   };
 
   const handleDeleteEvent = (event) => {
-  
     const date = event.date;
     const updatedEvents = {...events};
     if (updatedEvents[date]) {
