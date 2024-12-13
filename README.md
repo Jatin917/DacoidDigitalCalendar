@@ -31,6 +31,9 @@ Ensure you have the following installed:
    npm install
    npm run dev
 
+   To Build
+   npm run build  
+/* (dist is folder build) */
 
 Deployed Link -> https://dacoidcalendar.netlify.app/
    
