@@ -14,12 +14,13 @@ import {
 import { addDays, addMonths, endOfMonth, endOfWeek, isSameDay, isWeekend, startOfMonth, startOfWeek, subMonths } from "../utils/dateUtils";
 import AddEventModal from "./addEventModal";
 
-const Calendar = ({onAddEvent, selectedDate, setSelectedDate}) => {
+const Calendar = ({events, onAddEvent, selectedDate, setSelectedDate}) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(currentMonth.getFullYear()); 
   const [isEventModalOpen, setEventModal] = useState(false);
+  
   const isSameMonth = (date) =>{
       return (
           date && date.getMonth() === currentMonth.getMonth()
@@ -28,6 +29,33 @@ const Calendar = ({onAddEvent, selectedDate, setSelectedDate}) => {
   
   const startDate = startOfWeek(startOfMonth(currentMonth));
   const endDate = endOfWeek(endOfMonth(currentMonth));
+  const downloadAsJSON = (data) => {
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "exported-events.json";
+    link.click();
+  
+    URL.revokeObjectURL(url);
+  };
+  const exportEvents = () =>{
+    const currMonth = currentMonth.getMonth();
+    const dates = Object.keys(events);
+    console.log(dates);
+    const exportedArr = [];
+    dates.forEach((e)=>{
+      const date = new Date(e);
+      console.log(date.getMonth(), e);
+      if(date.getMonth()===currMonth){
+        exportedArr.push({date:e, events:events[e]});
+      }
+    });
+    console.log(exportedArr);
+    downloadAsJSON(exportedArr);
+  }
   const generateCalendar = () => {
     const dates = [];
     let day = startDate;
@@ -136,6 +164,13 @@ const Calendar = ({onAddEvent, selectedDate, setSelectedDate}) => {
           </p>
         </div>
   
+        <Button 
+          onClick={exportEvents} 
+          variant="outline" 
+          className="p-2 rounded-full hover:bg-blue-50"
+        >
+          Export
+        </Button>
         <Button 
           onClick={handleNextMonth} 
           variant="outline" 

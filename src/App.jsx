@@ -22,7 +22,7 @@ function App() {
   };
   return (
     <div className="bg-black flex">
-      <Calendar onAddEvent={onAddEvent} selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+      <Calendar events={events} onAddEvent={onAddEvent} selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
       <EventSidePanel setEvents={setEvents} events={events} onAddEvent={onAddEvent} selectedDate={selectedDate} />
     </div>
   )
