@@ -1,20 +1,48 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useMemo } from "react";
 import { getEventColor } from "../utils/dateUtils";
-import { Clock, CalendarClock, MoreHorizontal } from 'lucide-react';
+import { Clock, CalendarClock, MoreHorizontal, Search } from 'lucide-react';
 import EventList from "./EventList";
 
 const EventSidePanel = ({selectedDate, events, setEvents }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [nextEvent, setNextEvent] = useState(null);
+  const [searchItem, setSearchItem] = useState('');
 
-  // Update current time every second
+  const updateEventList = () => {
+    if (searchItem.trim() === '') {
+      return events;
+    }
+    const filtered = Object.keys(events).reduce((acc, date) => {
+      const filteredEvents = events[date].filter(event =>
+        event.eventName.toLowerCase().includes(searchItem.toLowerCase()) ||
+        (event.description && event.description.toLowerCase().includes(searchItem.toLowerCase()))
+      );
+      if (filteredEvents.length > 0) {
+        acc[date] = filteredEvents;
+      }
+      return acc;
+    }, {});
+    return filtered;
+  };
+  
+  const [filteredEvents, setFilteredEvents] = useState(events);
+  
+  useEffect(() => {
+    const intervalid = setTimeout(()=>{
+      const updatedEvents = updateEventList();
+      console.log(updatedEvents);
+      setFilteredEvents(updatedEvents);
+    }, 300);
+    return ()=>clearInterval(intervalid);
+  }, [searchItem, events]); 
+  
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
-    return () => clearInterval(intervalId); // Cleanup on unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   // Helper function to create a full date from time strings
@@ -25,13 +53,13 @@ const EventSidePanel = ({selectedDate, events, setEvents }) => {
 
   // Memoize sorted events
   const sortedEvents = useMemo(() => {
-    if (!selectedDate || !events[selectedDate.toDateString()]) return [];
-    return [...events[selectedDate.toDateString()]].sort((a, b) => {
+    if (!selectedDate || !filteredEvents[selectedDate.toDateString()]) return [];
+    return [...filteredEvents[selectedDate.toDateString()]].sort((a, b) => {
       const startA = getFullDateTime(selectedDate, a.startTime);
       const startB = getFullDateTime(selectedDate, b.startTime);
       return startA - startB;
     });
-  }, [selectedDate, events]);
+  }, [selectedDate, filteredEvents]);
   // console.log(events);
   // Find the next event
   useEffect(() => {
@@ -56,6 +84,17 @@ const EventSidePanel = ({selectedDate, events, setEvents }) => {
 
   return (
     <div className="side-panel p-4 w-1/4 bg-white shadow-lg border-l border-gray-200 min-h-screen relative">
+      {/* Search Bar */}
+      <div className="search-bar mb-4 relative">
+        <input 
+          onChange={(e)=>setSearchItem(e.target.value)}
+          type="text" 
+          placeholder="Search events..." 
+          className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+      </div>
+
       {/* Up next section */}
       <div className="up-next mb-6 border-b pb-4">
         {nextEvent ? (
@@ -76,75 +115,17 @@ const EventSidePanel = ({selectedDate, events, setEvents }) => {
           <p className="text-gray-500 text-center">No upcoming events</p>
         )}
       </div>
-
-      {/* List of events
-      <div className="event-list space-y-4">
-  {sortedEvents.map((event, index) => {
-    const eventTime = getFullDateTime(selectedDate, event.startTime);
-    const isUpcoming = eventTime > currentTime;
-    const eventColor = getEventColor(isUpcoming);
-
-    return (
-      index < 4 && (
-        <div
-          key={index}
-          className={`
-            event-item 
-            ${eventColor.background} 
-            ${eventColor.text} 
-            ${eventColor.border}
-            border 
-            rounded-lg 
-            p-3 
-            transition-all 
-            hover:shadow-md
-            hover:scale-[1.02]
-          `}
-        >
-          <div className="flex justify-between items-center">
-            <div className="event-time font-medium">{formatTime(eventTime)}</div>
-            {isUpcoming && (
-              <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded-full">
-                Upcoming
-              </span>
-            )}
-          </div>
-          <div className="event-name text-lg font-semibold mt-1">{event.eventName}</div>
-          <div className="event-duration text-sm opacity-70 mt-1">
-            {calculateDuration(event.startTime, event.endTime)}
-          </div>
-        </div>
-      )
-    );
-  })}
-
-  {sortedEvents.length > 4 && (
-    <div 
-      className="
-        more-events-indicator 
-        flex 
-        items-center 
-        justify-between 
-        bg-blue-50 
-        text-blue-800 
-        p-3 
-        rounded-lg 
-        cursor-pointer 
-        hover:bg-blue-100 
-        transition-colors
-      "
-    >
-      <div className="flex items-center">
-        <MoreHorizontal className="mr-2" />
-        <span className="font-medium">
-          {sortedEvents.length - 4} More Event{sortedEvents.length - 4 !== 1 ? 's' : ''}
-        </span>
-      </div>
-      <span className="text-sm opacity-70">View All</span>
-    </div>
-  )}
-</div> */}
-<EventList setEvents={setEvents} events={events} sortedEvents={sortedEvents} selectedDate={selectedDate} currentTime={currentTime} formatTime={formatTime} getFullDateTime={getFullDateTime} calculateDuration={calculateDuration} />
+      
+      <EventList 
+        setEvents={setEvents} 
+        events={events} 
+        sortedEvents={sortedEvents} 
+        selectedDate={selectedDate} 
+        currentTime={currentTime} 
+        formatTime={formatTime} 
+        getFullDateTime={getFullDateTime} 
+        calculateDuration={calculateDuration} 
+      />
     </div>
   );
 };
