@@ -40,13 +40,41 @@ const Calendar = ({onAddEvent, selectedDate, setSelectedDate}) => {
     return dates;
   };
   const handlePrevMonth = () => {
+    if (selectedDate) {
+      if (selectedDate.getDate() === 1) {
+        const prevMonthLastDay = new Date(
+          selectedDate.getFullYear(),
+          selectedDate.getMonth(),
+          0
+        );
+        setSelectedDate(prevMonthLastDay);
+      }
+      else setSelectedDate(null);
+    }
     setCurrentMonth(subMonths(currentMonth, 1));
   };
-
+  
   const handleNextMonth = () => {
+    if (selectedDate) {
+      const lastDayOfMonth = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth() + 1,
+        0
+      ).getDate();
+  
+      if (selectedDate.getDate() === lastDayOfMonth) {
+        const nextMonthFirstDay = new Date(
+          selectedDate.getFullYear(),
+          selectedDate.getMonth() + 1,
+          1
+        );
+        setSelectedDate(nextMonthFirstDay);
+      }
+      else setSelectedDate(null);
+    }
     setCurrentMonth(addMonths(currentMonth, 1));
   };
-
+  
   const handleDateClick = (date) => {
     setSelectedDate(date);
   };
@@ -68,9 +96,9 @@ const Calendar = ({onAddEvent, selectedDate, setSelectedDate}) => {
   }
 
 
-  useEffect(() => {
-    setSelectedDate(null);
-  }, [currentMonth, setSelectedDate]);
+  // useEffect(() => {
+  //   setSelectedDate(null);
+  // }, [currentMonth, setSelectedDate]);
 
   const getDayColor = (date) => {
     if (isSameDay(date, new Date())) return 'bg-blue-500 text-white font-bold';
@@ -226,6 +254,4 @@ const Calendar = ({onAddEvent, selectedDate, setSelectedDate}) => {
     </div>
   );
 };
-
-// export default Calendar;
-export default Calendar;
+export default Calendar
