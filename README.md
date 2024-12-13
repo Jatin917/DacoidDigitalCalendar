@@ -4,7 +4,7 @@ An intuitive event management app that allows users to create, view, update, del
 
 ## Features
 
-- **Add Events**: Easily add events with details such as name, date, start time, and end time.
+- **Add Events**: Easily add events(by double click on date) with details such as name, date, start time, and end time.
 - **Edit Events**: Update existing event details.
 - **Delete Events**: Remove unwanted events.
 - **Filter Events**: Search events by keywords for quick access.
