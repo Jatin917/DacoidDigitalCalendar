@@ -83,36 +83,40 @@ const EventSidePanel = ({selectedDate, events, setEvents }) => {
   };
 
   return (
-    <div className="side-panel p-4 w-1/4 bg-white shadow-lg border-l border-gray-200 min-h-screen relative">
+    <div className="side-panel p-2 sm:p-4 w-full md:w-1/4 bg-white shadow-lg border-l border-gray-200 min-h-screen relative">
       {/* Search Bar */}
-      <div className="search-bar mb-4 relative">
+      <div className="search-bar mb-2 sm:mb-4 relative">
         <input 
           onChange={(e)=>setSearchItem(e.target.value)}
           type="text" 
           placeholder="Search events..." 
-          className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-1 sm:py-2 text-xs sm:text-base rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
       </div>
 
       {/* Up next section */}
-      <div className="up-next mb-6 border-b pb-4">
+      <div className="up-next mb-4 sm:mb-6 border-b pb-2 sm:pb-4">
         {nextEvent ? (
-          <div className="bg-blue-500 text-white rounded-lg p-4 shadow-md">
-            <div className="flex items-center mb-2">
-              <CalendarClock className="mr-2" />
-              <span className="font-semibold">Up Next</span>
+          <div className="bg-blue-500 text-white rounded-lg p-2 sm:p-4 shadow-md">
+            <div className="flex items-center mb-1 sm:mb-2">
+              <CalendarClock className="mr-1 sm:mr-2 w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="font-semibold text-xs sm:text-base">Up Next</span>
             </div>
             <div className="event-details">
-              <p className="text-sm opacity-90">{formatTime(getFullDateTime(selectedDate, nextEvent.startTime))}</p>
-              <p className="text-lg font-bold">{nextEvent.eventName}</p>
-              <p className="text-sm opacity-80">
+              <p className="text-xs sm:text-sm opacity-90">
+                {formatTime(getFullDateTime(selectedDate, nextEvent.startTime))}
+              </p>
+              <p className="text-sm sm:text-lg font-bold truncate">
+                {nextEvent.eventName}
+              </p>
+              <p className="text-xs sm:text-sm opacity-80">
                 Duration: {calculateDuration(nextEvent.startTime, nextEvent.endTime)}
               </p>
             </div>
           </div>
         ) : (
-          <p className="text-gray-500 text-center">No upcoming events</p>
+          <p className="text-gray-500 text-center text-xs sm:text-base">No upcoming events</p>
         )}
       </div>
       

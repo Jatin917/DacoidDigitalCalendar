@@ -21,9 +21,21 @@ function App() {
     localStorage.setItem("events", JSON.stringify(updatedEvents));
   };
   return (
-    <div className="bg-black flex">
-      <Calendar events={events} onAddEvent={onAddEvent} selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
-      <EventSidePanel setEvents={setEvents} events={events} onAddEvent={onAddEvent} selectedDate={selectedDate} />
+<div className="bg-black flex flex-col md:flex-row min-h-screen">
+      <Calendar 
+        className="w-full md:w-3/4 lg:w-2/3 xl:w-3/4" 
+        events={events} 
+        onAddEvent={onAddEvent} 
+        selectedDate={selectedDate} 
+        setSelectedDate={setSelectedDate} 
+      />
+      <EventSidePanel 
+        className="w-full md:w-1/4 lg:w-1/3 xl:w-1/4" 
+        setEvents={setEvents} 
+        events={events} 
+        onAddEvent={onAddEvent} 
+        selectedDate={selectedDate} 
+      />
     </div>
   )
 }
