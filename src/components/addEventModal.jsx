@@ -27,9 +27,9 @@ const AddEventModal = ({ onClose, onAddEvent }) => {
         endTime,
         description,
       };
-      onAddEvent(newEvent); // Pass the event data back to the parent
+      onAddEvent({...newEvent, id:Date.now()});
       resetForm();
-      onClose(); // Close the modal after adding the event
+      onClose();
     } else {
       alert("Event name, start time, and end time are required!");
     }
